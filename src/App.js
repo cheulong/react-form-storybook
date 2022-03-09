@@ -44,6 +44,7 @@ export default function App() {
       email: "",
       password: "",
       acceptTerms: false,
+      isRemember: false,
     },
   });
   const onSubmit = (data) => console.log(data);
@@ -70,32 +71,63 @@ export default function App() {
               </Typography>
               <Box
                 component="form"
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
                 noValidate
                 sx={{ mt: 1 }}
               >
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
+                <Controller
                   id="email"
-                  label="Email Address"
                   name="email"
                   autoComplete="email"
-                  autoFocus
-                />
-                <TextField
                   margin="normal"
-                  required
-                  fullWidth
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Email Address"
+                      required
+                      fullWidth
+                      autoFocus
+                    />
+                  )}
+                />
+
+                <Controller
                   name="password"
                   label="Password"
                   type="password"
                   id="password"
-                  autoComplete="current-password"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Password"
+                      required
+                      fullWidth
+                      autoComplete="current-password"
+                      margin="normal"
+                    />
+                  )}
                 />
+
                 <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
+                  control={
+                    <Controller
+                      name="isRemember"
+                      id="isRemember"
+                      acceptTerms
+                      control={control}
+                      render={({ field }) => (
+                        <Checkbox
+                          {...field}
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          color="primary"
+                          value="remember"
+                        />
+                      )}
+                    />
+                  }
                   label="Remember me"
                 />
                 <Button
@@ -107,11 +139,6 @@ export default function App() {
                   Sign In
                 </Button>
                 <Grid container>
-                  <Grid item xs>
-                    <Link href="#" variant="body2">
-                      Forgot password?
-                    </Link>
-                  </Grid>
                   <Grid item>
                     <Link
                       href="#"
@@ -211,9 +238,37 @@ export default function App() {
                     />
                   </Grid>
                   <Grid item xs={12}>
+                    <Controller
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Password"
+                          required
+                          fullWidth
+                        />
+                      )}
+                    />
+
                     <FormControlLabel
                       control={
-                        <Checkbox value="allowExtraEmails" color="primary" />
+                        <Controller
+                          name="acceptTerms"
+                          id="acceptTerms"
+                          acceptTerms
+                          control={control}
+                          render={({ field }) => (
+                            <Checkbox
+                              {...field}
+                              checked={field.value}
+                              onChange={(e) => field.onChange(e.target.checked)}
+                            />
+                          )}
+                        />
                       }
                       label="I want to receive inspiration, marketing promotions and updates via email."
                     />
