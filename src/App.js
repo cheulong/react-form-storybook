@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFormState } from "react-hook-form";
 import Input from "@mui/material/Input";
 import Button from "@mui/material/Button";
 import InputLabel from "@mui/material/InputLabel";
@@ -17,6 +17,17 @@ import Container from "@mui/material/Container";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup
+  .object({
+    firstName: yup.string().required(),
+    lastName: yup.string().required(),
+    email: yup.string().email().required(),
+    password: yup.string().required().min(6),
+  })
+  .required();
 
 function Copyright(props) {
   return (
@@ -37,7 +48,13 @@ function Copyright(props) {
 }
 
 export default function App() {
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+  } = useForm({
+    resolver: yupResolver(schema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -47,6 +64,12 @@ export default function App() {
       isRemember: false,
     },
   });
+  const { touchedFields } = useFormState({
+    control,
+  });
+  const { firstName, lastName, email, password } = errors;
+
+  console.log(errors);
   const onSubmit = (data) => console.log(data);
   const [isSignUp, setIsSignUp] = useState(false);
   return (
@@ -88,6 +111,8 @@ export default function App() {
                       required
                       fullWidth
                       autoFocus
+                      helperText={email?.message}
+                      error={email ? true : false}
                     />
                   )}
                 />
@@ -106,6 +131,8 @@ export default function App() {
                       fullWidth
                       autoComplete="current-password"
                       margin="normal"
+                      helperText={password?.message}
+                      error={password ? true : false}
                     />
                   )}
                 />
@@ -142,7 +169,10 @@ export default function App() {
                   <Grid item>
                     <Link
                       href="#"
-                      onClick={() => setIsSignUp((prev) => !prev)}
+                      onClick={() => {
+                        setIsSignUp((prev) => !prev);
+                        clearErrors();
+                      }}
                       variant="body2"
                     >
                       {"Don't have an account? Sign Up"}
@@ -188,7 +218,13 @@ export default function App() {
                       autoFocus
                       control={control}
                       render={({ field }) => (
-                        <TextField {...field} label="First Name" required />
+                        <TextField
+                          {...field}
+                          label="First Name"
+                          required
+                          helperText={firstName?.message}
+                          error={firstName ? true : false}
+                        />
                       )}
                     />
                   </Grid>
@@ -200,7 +236,13 @@ export default function App() {
                       autoComplete="family-name"
                       control={control}
                       render={({ field }) => (
-                        <TextField {...field} label="Last Name" required />
+                        <TextField
+                          {...field}
+                          label="Last Name"
+                          required
+                          helperText={lastName?.message}
+                          error={lastName ? true : false}
+                        />
                       )}
                     />
                   </Grid>
@@ -216,6 +258,8 @@ export default function App() {
                           label="Email Address"
                           required
                           fullWidth
+                          helperText={email?.message}
+                          error={email ? true : false}
                         />
                       )}
                     />
@@ -233,27 +277,13 @@ export default function App() {
                           label="Password"
                           required
                           fullWidth
+                          helperText={password?.message}
+                          error={password ? true : false}
                         />
                       )}
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <Controller
-                      name="password"
-                      label="Password"
-                      type="password"
-                      id="password"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Password"
-                          required
-                          fullWidth
-                        />
-                      )}
-                    />
-
                     <FormControlLabel
                       control={
                         <Controller
@@ -286,7 +316,10 @@ export default function App() {
                   <Grid item>
                     <Link
                       href="#"
-                      onClick={() => setIsSignUp((prev) => !prev)}
+                      onClick={() => {
+                        setIsSignUp((prev) => !prev);
+                        clearErrors();
+                      }}
                       variant="body2"
                     >
                       Already have an account? Sign in
