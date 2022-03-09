@@ -41,6 +41,9 @@ export default function App() {
     defaultValues: {
       firstName: "",
       lastName: "",
+      email: "",
+      password: "",
+      acceptTerms: false,
     },
   });
   const onSubmit = (data) => console.log(data);
@@ -145,50 +148,66 @@ export default function App() {
               <Box
                 component="form"
                 noValidate
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
                 sx={{ mt: 3 }}
               >
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <TextField
+                    <Controller
                       autoComplete="given-name"
                       name="firstName"
-                      required
                       fullWidth
                       id="firstName"
-                      label="First Name"
                       autoFocus
+                      control={control}
+                      render={({ field }) => (
+                        <TextField {...field} label="First Name" required />
+                      )}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
+                    <Controller
                       fullWidth
                       id="lastName"
-                      label="Last Name"
                       name="lastName"
                       autoComplete="family-name"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField {...field} label="Last Name" required />
+                      )}
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
+                    <Controller
                       id="email"
-                      label="Email Address"
                       name="email"
                       autoComplete="email"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Email Address"
+                          required
+                          fullWidth
+                        />
+                      )}
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
+                    <Controller
                       name="password"
                       label="Password"
                       type="password"
                       id="password"
-                      autoComplete="new-password"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Password"
+                          required
+                          fullWidth
+                        />
+                      )}
                     />
                   </Grid>
                   <Grid item xs={12}>
